@@ -1,0 +1,22 @@
+{
+  "name": "photogrid",
+  "version": "1.0.0",
+  "description": "Using AWS services to deploy a node.js app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Rishav Ghosh",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "2.401.0",
+    "express": "4.4.3",
+    "formidable": "1.2.0",
+    "gm": "1.20.0",
+    "hogan-express": "0.5.2",
+    "mongoose": "4.1.9",
+    "nodemon": "1.18.10",
+    "socket.io": "1.0.5",
+    "sort-json-array": "0.1.7"
+  }
+}

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>PhotoBUCKET</title>
+	<link rel="stylesheet" href="../css/main.css">
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="../js/photogrid_utils.js"></script>
+	<script>
+		$(function(){
+			var host='{{host}}';
+			var bucket = '{{bucket}}'
+			$("#doUpload").on('click',function(){
+				uploadNow();
+			});
+
+			var socket =io(host);
+			socket.on('status',function(data){
+				showStatus(data.msg,data.delay);
+			});
+
+			socket.on('doUpdate',function(){
+				renderList();
+			});
+
+			function renderList(){
+			//We use ajax here to call the getimages route and get the JSON result	
+				ajax({
+					url: host + '/getimages',
+					success: function(data){
+						console.log("render was a success outer");
+						$('.gallery ul').html('');
+						var imageList = JSON.parse(data.response);
+						for(var i = 0;i<imageList.length;i++)
+						{
+							  var galleryTemplate = `<li>
+														<div class="overlay">
+														<div class="voteCtrl">
+															<a href="#" data-photoid = ${imageList[i].id} class="voteUp">
+															<img src="/images/voteup.png" alt="Click Here to Vote Up !">
+															<h4>${imageList[i].votes}</h4>
+															</a>
+														</div>
+														</div>
+														<div class="imageHolder">
+															<img src="http://d22u8xkf9f6c0i.cloudfront.net/${imageList[i].filename}" alt="">
+														</div>
+													</li>`;
+							  $('.gallery ul').append(galleryTemplate);
+							  console.log("render was a success");
+
+						}
+					}
+				});
+			}
+
+			renderList();
+
+			function uploadNow(){
+				$('.progress').fadeIn(100);
+				var uploadURL = host+'/upload';
+				var uploadFile = $('.uploadPic');
+				if(uploadFile.val()!=''){
+					//The html5 form data api is used to programmatically create a form containing the file that we send via ajax to node js
+
+					var form = new FormData();
+					form.append("upload",uploadFile[0].files[0]);//Name of the form field is 'upload' and when we use input type 'file' then we recieve an array called 'files' which recieves the files to be uploaded
+
+					//Perform the AJAX POST request and send the file 
+					ajax({
+						method:'post',
+						url:uploadURL,
+						success:function(){
+							$('.progress').fadeOut(200);
+							uploadFile.val('');
+						},
+						progress:function(e){
+							if(e.lengthComputable){
+								var perc=Math.round((e.loaded*100)/e.total);
+								$('.progress').css('width',(perc + '%'));
+							}
+						},
+						payload:form
+					});
+				}
+			}
+
+			$(document).on('click','.voteUp',function(e){
+				var vote = $(this);
+				var loadId = vote.data('photoid')
+				ajax({
+					url: host + '/voteup/' + loadId,
+					success:function(data){
+						var parsedData = JSON.parse(data.response);
+						vote.find('h4').html(parsedData);
+						renderList();
+					}
+				});
+			});
+		});
+	</script>
+
+</head>
+<body>
+	<div class="container">
+		<div class="topDeck">
+			<div class="logo">
+				<h1>PhotoBUCKET</h1>
+			</div>
+			<div class="controls">
+				<input type="file" name="uploadPic" class="uploadPic">
+				<button id="doUpload">Upload</button>
+				<div class="progressBarDiv">
+					<div class="progress"></div>
+				</div>
+				<h5 class="status"></h5>
+			</div>
+		</div>
+		<div class="gallery">
+			<ul>
+				<!-- Repeat the following <li> structure for every image -->
+				<li>
+					<div class="overlay">
+					<div class="voteCtrl">
+						<a href="#" class="voteUp">
+							<img src="/images/voteup.png" alt="Click Here to Vote Up !">
+							<h4>100</h4>
+						</a>
+					</div>
+					</div>
+					<div class="imageHolder">
+						<img src="/images/someimage.jpg" alt="">
+					</div>
+				</li>
+				<!-- End Repeat -->
+
+
+			</ul>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+	"host":"http://18.217.30.162/",
+	"S3AccessKey":"AKIAJ3DSWJNZMKD5J6GA",
+	"S3Secret":"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",
+	"S3Bucket":"photo-cloud-bucket",
+	"S3Region":"us-east-2",
+	"dbTable" : "demoimages"
+
+}

@@ -1,0 +1,11 @@
+
+
+{
+	"host":"http://localhost:3000",
+	"S3AccessKey":"AKIAJ3DSWJNZMKD5J6GA",
+	"S3Secret":"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",
+	"S3Bucket":"photo-cloud-bucket",
+	"S3Region":"us-east-2",
+	"dbUrl" : "mongodb://photogrid:Zxcvbn123456@ds039427.mlab.com:39427/photogrid",
+	"dbTable" : "photodata"
+}

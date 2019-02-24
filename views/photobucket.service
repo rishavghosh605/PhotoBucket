@@ -1,0 +1,12 @@
+description "Photobucket"
+
+
+start on started  mountall
+stop on shutdown
+
+respawn
+respawn limit 99 5
+
+env NODE_ENV=production
+
+exec node/home/ubuntu/photobucket/app.js >> /var/log/photogrid.log 2>$1
